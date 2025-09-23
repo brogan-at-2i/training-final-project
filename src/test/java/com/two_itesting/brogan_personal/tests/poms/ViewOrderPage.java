@@ -17,6 +17,7 @@ public class ViewOrderPage extends EdgewordsShopPage {
     }
 
     public String captureSingleItemOrdered() {
+        // does work with >1 item ordered, will just return the first in this case
         WebElement itemOrderedElem = this.driver.findElement(productOrderedLocator);
         return  itemOrderedElem.getText();
     }

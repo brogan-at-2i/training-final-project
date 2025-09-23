@@ -14,7 +14,8 @@ public class OrderReceivedPage extends EdgewordsShopPage {
     private static final By orderTotalLocator = By.cssSelector("div.woocommerce-order > ul > li:nth-of-type(4) > strong");
     private static final By orderPaymentMethodLocator = By.cssSelector("div.woocommerce-order > ul > li:nth-of-type(5) > strong");
 
-    private static final String URL = "https://www.edgewordstraining.co.uk/demo-site/checkout/order-received/"; // /<ordernumber>/?<wc-key>
+    // stem, as any order received is <URL>/<ordernumber>/?<wc-key>
+    private static final String URL = "https://www.edgewordstraining.co.uk/demo-site/checkout/order-received/";
 
     public OrderReceivedPage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait, URL);

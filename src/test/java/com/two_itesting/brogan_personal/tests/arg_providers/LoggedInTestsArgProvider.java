@@ -41,7 +41,7 @@ public final class LoggedInTestsArgProvider implements ArgumentsProvider {
         // then PREPEND username and password as login-specific test
         // and APPEND chosen product ID
         for (List<String> argSet : stringArgsFromFile) {
-            argSet.add(0, properties.getProperty("username"));
+            argSet.add(0, properties.getProperty("username")); // hard-coded to get username/password
             argSet.add(1, properties.getProperty("password"));
             argSet.addLast(generateProductId());
         }
@@ -65,7 +65,7 @@ public final class LoggedInTestsArgProvider implements ArgumentsProvider {
         List<CSVRecord> records = parser.getRecords();
         List<List<String>> allFoundArgs = new ArrayList<>();
         List<String> readInFields;
-        for (CSVRecord record : records) {
+        for (CSVRecord record : records) { // read each field in as separate argument, each record separate call
             readInFields = record.toList();
             allFoundArgs.add(readInFields);
         }
@@ -81,7 +81,7 @@ public final class LoggedInTestsArgProvider implements ArgumentsProvider {
     }
 
     private static String generateProductId() {
-        String minProductId = properties.getProperty("siteMinProductId");
+        String minProductId = properties.getProperty("siteMinProductId"); // range of product ids so can pick randomly
         String maxProductId = properties.getProperty("siteMaxProductId");
         int numMinProductId = Integer.parseInt(minProductId);
         int numMaxProductId = Integer.parseInt(maxProductId);

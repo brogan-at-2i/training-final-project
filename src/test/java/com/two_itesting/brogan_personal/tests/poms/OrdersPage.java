@@ -6,6 +6,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class OrdersPage extends EdgewordsShopPage {
 
+    // e.g. order number is #1234
     private static final String viewOrderButtonLocatorStringTemplate = "#%s";
 
     private static final String URL = "https://www.edgewordstraining.co.uk/demo-site/my-account/orders/";

@@ -17,6 +17,7 @@ public class EditAccountPage extends EdgewordsShopPage {
     }
 
     public void updateName(String firstName, String lastName) {
+        // convenience function to encapsulate many different actions
         this.clearField(firstNameFieldLocator);
         this.clearField(lastNameFieldLocator);
         this.enterTextInField(firstName, firstNameFieldLocator);
