@@ -1,0 +1,28 @@
+package com.two_itesting.brogan_personal.tests.poms;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+public class ViewOrderPage extends EdgewordsShopPage {
+
+    private static final By productOrderedLocator = By.cssSelector("section.woocommerce-order-details > table tr:nth-of-type(1) > td:nth-of-type(1) > a");
+    private static final By orderTotalLocator = By.cssSelector("section.woocommerce-order-details > table > tfoot > tr:nth-child(4) > td > span");
+
+    private static final String URL = "https://www.edgewordstraining.co.uk/demo-site/my-account/view-order/";
+
+    public ViewOrderPage(WebDriver driver, WebDriverWait wait) {
+        super(driver, wait, URL);
+    }
+
+    public String captureSingleItemOrdered() {
+        WebElement itemOrderedElem = this.driver.findElement(productOrderedLocator);
+        return  itemOrderedElem.getText();
+    }
+
+    public double captureOrderTotal() {
+        WebElement orderTotalElem = this.driver.findElement(orderTotalLocator);
+        return this.interpretPricedAsDouble(orderTotalElem.getText());
+    }
+}
