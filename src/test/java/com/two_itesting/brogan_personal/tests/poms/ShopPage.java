@@ -5,6 +5,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class ShopPage extends EdgewordsShopPage {
@@ -26,21 +27,21 @@ public class ShopPage extends EdgewordsShopPage {
         this.clickWhenClickable(By.cssSelector(addToCartLocatorStringTemplate.formatted(productId)));
     }
 
-    public double captureProductPrice(String productId) {
+    public BigDecimal captureProductPrice(String productId) {
         By onSalePriceLocator = By.cssSelector(saleProductPriceLocatorStringTemplate.formatted(productId));
         List<WebElement> prices = this.driver.findElements(onSalePriceLocator);
         WebElement priceElement;
         if (!prices.isEmpty()) {
             // then found a price, return it
             priceElement = prices.getFirst();
-            return this.interpretPricedAsDouble(priceElement.getText());
+            return this.interpretPricedAsBigDecimal(priceElement.getText());
         } // else, try assuming it isn't on sale
         By productPriceLocator = By.cssSelector(productPriceLocatorStringTemplate.formatted(productId));
         prices = this.driver.findElements(productPriceLocator);
         if (!prices.isEmpty()) {
             // then found a normal price, return it
             priceElement = prices.getFirst();
-            return this.interpretPricedAsDouble(priceElement.getText());
+            return this.interpretPricedAsBigDecimal(priceElement.getText());
         }
         throw new RuntimeException("Unable to capture price for product " + productId);
     }

@@ -4,6 +4,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.math.BigDecimal;
+
 /**
  * This class is a base class for a page of the Edgewords Shop, and
  * contains locators for the (relevant) elements common to each page.
@@ -51,6 +53,15 @@ public abstract class EdgewordsShopPage extends Page {
         } else if (priceString.charAt(0) == '-' && priceString.charAt(1) == '£') {
             return Double.parseDouble("-" + priceString.substring(2));
         } // else ...
+        throw new RuntimeException("Data not parseable");
+    }
+
+    public BigDecimal interpretPricedAsBigDecimal(String priceString) {
+        if (priceString.charAt(0) == '£') {
+            return new BigDecimal(priceString.substring(1));
+        } else if (priceString.charAt(0) == '-' && priceString.charAt(1) == '£') {
+            return new BigDecimal("-" + priceString.substring(2));
+        }
         throw new RuntimeException("Data not parseable");
     }
 }

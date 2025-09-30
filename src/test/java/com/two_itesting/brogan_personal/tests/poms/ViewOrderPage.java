@@ -5,6 +5,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.math.BigDecimal;
+
 public class ViewOrderPage extends EdgewordsShopPage {
 
     private static final By productOrderedLocator = By.cssSelector("section.woocommerce-order-details > table tr:nth-of-type(1) > td:nth-of-type(1) > a");
@@ -22,8 +24,8 @@ public class ViewOrderPage extends EdgewordsShopPage {
         return  itemOrderedElem.getText();
     }
 
-    public double captureOrderTotal() {
+    public BigDecimal captureOrderTotal() {
         WebElement orderTotalElem = this.driver.findElement(orderTotalLocator);
-        return this.interpretPricedAsDouble(orderTotalElem.getText());
+        return this.interpretPricedAsBigDecimal(orderTotalElem.getText());
     }
 }

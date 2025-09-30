@@ -11,6 +11,7 @@ import org.openqa.selenium.TakesScreenshot;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,6 +22,7 @@ import java.util.Properties;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.closeTo;
+import static org.hamcrest.Matchers.comparesEqualTo;
 
 /**
  * Test the functionality available when logged in to the Edgewords Shop.
@@ -73,7 +75,7 @@ public class LoggedInTests extends EdgewordsWebDriverTests {
             // now moving onto shop page
             this.shopPage.waitUntilOnThisPage();
             // product price captured for checking once basket reached
-            double productPrice = this.shopPage.captureProductPrice(productCode);
+            BigDecimal productPrice = this.shopPage.captureProductPrice(productCode);
             this.shopPage.clickAddToCartForProduct(productCode);
             this.shopPage.clickCartInNavbar();
             // now moving onto cart page
@@ -81,16 +83,18 @@ public class LoggedInTests extends EdgewordsWebDriverTests {
             this.cartPage.waitUntilProductInCart();
             this.cartPage.enterCouponCode(discountCode);
             this.cartPage.clickApplyCouponButton();
-            double cartSubtotal = this.cartPage.captureCartSubtotal();
-            assertThat(cartSubtotal, closeTo(productPrice, CURRENCY_ERR));
+            BigDecimal cartSubtotal = this.cartPage.captureCartSubtotal();
+            assertThat(productPrice, comparesEqualTo(cartSubtotal));
             // assert here cart subtotal = captured price from earlier
             // then assert that the money removed is subtotal * discountValue
             // then assert that subtotal - discount value + shipping = total
-            double couponDeduction = this.cartPage.captureCouponDeduction();
-            assertThat(couponDeduction, closeTo(cartSubtotal * discountValue, CURRENCY_ERR));
-            double shippingCost = this.cartPage.captureShippingCost();
-            double finalCartTotal = this.cartPage.captureFinalCartTotal();
-            assertThat(finalCartTotal, closeTo(cartSubtotal - couponDeduction + shippingCost, CURRENCY_ERR));
+            BigDecimal couponDeduction = this.cartPage.captureCouponDeduction();
+            BigDecimal calculatedCouponDeduction = cartSubtotal.multiply(BigDecimal.valueOf(discountValue));
+            assertThat(couponDeduction, comparesEqualTo(calculatedCouponDeduction));
+            BigDecimal shippingCost = this.cartPage.captureShippingCost();
+            BigDecimal finalCartTotal = this.cartPage.captureFinalCartTotal();
+            BigDecimal calculatedFinalTotal = cartSubtotal.subtract(couponDeduction).add(shippingCost);
+            assertThat(finalCartTotal, comparesEqualTo(calculatedFinalTotal));
         } catch (Exception e) {
             this.takeAndSaveScreenshot("testCouponsApplied");
             throw e;
@@ -107,7 +111,7 @@ public class LoggedInTests extends EdgewordsWebDriverTests {
             // now moving onto shop page
             this.shopPage.waitUntilOnThisPage();
             // product price captured for checking once basket reached
-            double productPrice = this.shopPage.captureProductPrice(productCode);
+            BigDecimal productPrice = this.shopPage.captureProductPrice(productCode);
             String productName = this.shopPage.captureProductName(productCode);
             this.shopPage.clickAddToCartForProduct(productCode);
             try {
@@ -119,8 +123,8 @@ public class LoggedInTests extends EdgewordsWebDriverTests {
             // now moving onto cart page
             this.cartPage.waitUntilOnThisPage();
             this.cartPage.waitUntilProductInCart();
-            double cartSubtotal = this.cartPage.captureCartSubtotal();
-            assertThat(cartSubtotal, closeTo(productPrice, CURRENCY_ERR));
+            BigDecimal cartSubtotal = this.cartPage.captureCartSubtotal();
+            assertThat(productPrice, comparesEqualTo(cartSubtotal));
             // still only need one -- can just update the billing address form
             // and gets shipped there
             this.cartPage.clickCheckoutButton();
@@ -132,7 +136,7 @@ public class LoggedInTests extends EdgewordsWebDriverTests {
             String capturedOrderNumber = this.orderReceivedPage.captureOrderNumber();
             String capturedDate = this.orderReceivedPage.captureOrderDate();
             String capturedEmail = this.orderReceivedPage.captureOrderEmail();
-            double capturedTotal = this.orderReceivedPage.captureOrderTotal();
+            BigDecimal capturedTotal = this.orderReceivedPage.captureOrderTotal();
             String capturedPaymentMethod = this.orderReceivedPage.captureOrderPaymentMethod();
             this.orderReceivedPage.clickMyAccountInNavbar();
             this.myAccountPage.waitUntilOnThisPage();
@@ -140,8 +144,8 @@ public class LoggedInTests extends EdgewordsWebDriverTests {
             this.ordersPage.clickToViewOrder(capturedOrderNumber);
             this.viewOrderPage.waitUntilOnSubOfThisPage();
             String capturedOrderProductName = this.viewOrderPage.captureSingleItemOrdered();
-            double capturedOrderTotal = this.viewOrderPage.captureOrderTotal();
-            assertThat(capturedOrderTotal, closeTo(capturedTotal, CURRENCY_ERR));
+            BigDecimal capturedOrderTotal = this.viewOrderPage.captureOrderTotal();
+            assertThat(capturedOrderTotal, comparesEqualTo(capturedTotal));
         } catch (Exception e) {
             this.takeAndSaveScreenshot("testPlacedOrderIsTracked");
             throw e;

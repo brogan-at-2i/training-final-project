@@ -4,6 +4,7 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class CartPage extends EdgewordsShopPage {
@@ -64,25 +65,25 @@ public class CartPage extends EdgewordsShopPage {
         }
     }
 
-    public double captureCartSubtotal() {
+    public BigDecimal captureCartSubtotal() {
         WebElement cartSubtotalElem = this.wait.until(ExpectedConditions.visibilityOfElementLocated(cartSubtotalLocator));
-        return this.interpretPricedAsDouble(cartSubtotalElem.getText());
+        return this.interpretPricedAsBigDecimal(cartSubtotalElem.getText());
     }
 
-    public double captureCouponDeduction() {
+    public BigDecimal captureCouponDeduction() {
         // often experience issues with this, so utilising waits
         WebElement couponDeductionElem = this.wait.until(ExpectedConditions.visibilityOfElementLocated(couponDeductionLabelLocator));
-        return this.interpretPricedAsDouble(couponDeductionElem.getText());
+        return this.interpretPricedAsBigDecimal(couponDeductionElem.getText());
     }
 
-    public double captureShippingCost() {
+    public BigDecimal captureShippingCost() {
         WebElement shippingCostElem = this.driver.findElement(shippingLabelLocator);
-        return this.interpretPricedAsDouble(shippingCostElem.getText());
+        return this.interpretPricedAsBigDecimal(shippingCostElem.getText());
     }
 
-    public double captureFinalCartTotal() {
+    public BigDecimal captureFinalCartTotal() {
         WebElement finalCartTotalElem = this.driver.findElement(finalCartTotalLocator);
-        return this.interpretPricedAsDouble(finalCartTotalElem.getText());
+        return this.interpretPricedAsBigDecimal(finalCartTotalElem.getText());
     }
 
     public void clickCheckoutButton() {
