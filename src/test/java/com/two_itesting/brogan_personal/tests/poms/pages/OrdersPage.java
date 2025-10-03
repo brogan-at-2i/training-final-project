@@ -1,10 +1,11 @@
-package com.two_itesting.brogan_personal.tests.poms;
+package com.two_itesting.brogan_personal.tests.poms.pages;
 
+import com.two_itesting.brogan_personal.tests.poms.base.EdgewordsShopPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class OrdersPage extends EdgewordsShopPage {
+public class OrdersPage extends EdgewordsShopPage<OrdersPage> {
 
     // e.g. order number is #1234
     private static final String viewOrderButtonLocatorStringTemplate = "#%s";
@@ -15,9 +16,10 @@ public class OrdersPage extends EdgewordsShopPage {
         super(driver, wait, URL);
     }
 
-    public void clickToViewOrder(String orderNumber) {
+    public ViewOrderPage clickToViewOrder(String orderNumber) {
         By orderViewButtonLocator = By.linkText(viewOrderButtonLocatorStringTemplate.formatted(orderNumber));
         this.clickWhenClickable(orderViewButtonLocator);
+        return new ViewOrderPage(this.driver, this.wait);
     }
 
 }

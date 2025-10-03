@@ -11,7 +11,7 @@ target/
 *.iws
 *.iml
 *.ipr
-
+.allure
 ### Eclipse ###
 .apt_generated
 .classpath
@@ -36,3 +36,10 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Allure ###
+.allure
+/.allure/
+/.idea/
+/.mvn/
+/allure-results/

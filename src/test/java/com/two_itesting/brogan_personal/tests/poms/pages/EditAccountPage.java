@@ -1,10 +1,11 @@
-package com.two_itesting.brogan_personal.tests.poms;
+package com.two_itesting.brogan_personal.tests.poms.pages;
 
+import com.two_itesting.brogan_personal.tests.poms.base.EdgewordsShopPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class EditAccountPage extends EdgewordsShopPage {
+public class EditAccountPage extends EdgewordsShopPage<EditAccountPage> {
 
     private static final By firstNameFieldLocator = By.id("account_first_name");
     private static final By lastNameFieldLocator = By.id("account_last_name");
@@ -16,16 +17,17 @@ public class EditAccountPage extends EdgewordsShopPage {
         super(driver, wait, URL);
     }
 
-    public void updateName(String firstName, String lastName) {
+    public EditAccountPage updateName(String firstName, String lastName) {
         // convenience function to encapsulate many different actions
-        this.clearField(firstNameFieldLocator);
-        this.clearField(lastNameFieldLocator);
-        this.enterTextInField(firstName, firstNameFieldLocator);
-        this.enterTextInField(lastName, lastNameFieldLocator);
-        this.saveChanges();
+        return this
+                .clearField(firstNameFieldLocator)
+                .clearField(lastNameFieldLocator)
+                .enterTextInField(firstName, firstNameFieldLocator)
+                .enterTextInField(lastName, lastNameFieldLocator)
+                .saveChanges();
     }
 
-    public void saveChanges() {
-        this.clickWhenClickable(saveChangesButtonLocator);
+    public EditAccountPage saveChanges() {
+        return this.clickWhenClickable(saveChangesButtonLocator);
     }
 }

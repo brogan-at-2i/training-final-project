@@ -1,27 +1,20 @@
 package com.two_itesting.brogan_personal.tests;
 
-import com.two_itesting.brogan_personal.tests.arg_providers.LoggedInTestsArgProvider;
+import com.two_itesting.brogan_personal.tests.poms.pages.MyAccountPage;
+import com.two_itesting.brogan_personal.tests.poms.pages.OrderReceivedPage;
+import com.two_itesting.brogan_personal.tests.test_data.EdgewordsTestDataSource;
+import com.two_itesting.brogan_personal.tests.test_data.User;
+import com.two_itesting.brogan_personal.tests.utils.CaptureHelper;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ArgumentsSource;
-import org.openqa.selenium.OutputType;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.openqa.selenium.TakesScreenshot;
 
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Properties;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.comparesEqualTo;
 
 /**
@@ -29,139 +22,100 @@ import static org.hamcrest.Matchers.comparesEqualTo;
  */
 public class LoggedInTests extends EdgewordsWebDriverTests {
 
-    private static Properties properties;
-
-    @BeforeAll
-    public static void initProperties() throws IOException {
-        // static, get props
-        properties = new Properties();
-        properties.load(LoggedInTestsArgProvider.loadResourceAsStream(LoggedInTestsArgProvider.TEST_PROPERTIES_FILENAME));
-    }
-
     @BeforeEach
     @Override
     public void setUp() throws IOException {
         super.setUp(); // ensure super constructs driver etc.
-        this.myAccountPage.navigateToThisPage();
-        this.myAccountPage.dismissDisclaimer();
-        this.myAccountPage.loginUser(properties.getProperty("username"), properties.getProperty("password"));
-        this.myAccountPage.clickCartInNavbar();
-        this.cartPage.waitUntilOnThisPage();
-        this.cartPage.clearCart();
-        this.cartPage.clearAppliedCoupons();
-        this.cartPage.clickMyAccountInNavbar();
-        this.myAccountPage.waitUntilOnThisPage();
-        this.myAccountPage.clickAccountDetailsButton();
-        this.editAccountPage.waitUntilOnThisPage();
-        this.editAccountPage.updateName(properties.getProperty("firstName", ""), properties.getProperty("lastName", ""));
-
-        this.myAccountPage.logoutUser();
+        User user = EdgewordsTestDataSource.DEFAULT_USER;
+        new MyAccountPage(this.driver, this.wait, true)
+                .dismissDisclaimer()
+                .navbar().navigateToMyAccount()
+                .loginUser(user.username(), user.password())
+                .navbar().navigateToCart()
+                .clearCart()
+                .clearAppliedCoupons()
+                .navbar().navigateToMyAccount();
+        // leaves user in logged in state for following tests
     }
 
     @AfterEach
     public void tearDown() {
-        this.myAccountPage.navigateToThisPage();
-        this.myAccountPage.logoutUser();
+        new MyAccountPage(this.driver, this.wait, true)
+                .logoutUser();
         super.tearDown(); // super handles driver teardown
     }
 
     @ParameterizedTest
-    @ArgumentsSource(LoggedInTestsArgProvider.class)
-    public void testCouponsApplied(String username, String password, String discountCode, double discountValue, String productCode) {
+    @MethodSource(TEST_DATA_SOURCE + "#provideForTestCouponsApplied")
+    public void testCouponsApplied(User user, String couponCode, BigDecimal couponValue, String productName) {
         try {
-            this.myAccountPage.navigateToThisPage();
-            this.myAccountPage.loginUser(username, password);
-            this.myAccountPage.clickShopInNavbar();
-            // now moving onto shop page
-            this.shopPage.waitUntilOnThisPage();
-            // product price captured for checking once basket reached
-            BigDecimal productPrice = this.shopPage.captureProductPrice(productCode);
-            this.shopPage.clickAddToCartForProduct(productCode);
-            this.shopPage.clickCartInNavbar();
-            // now moving onto cart page
-            this.cartPage.waitUntilOnThisPage();
-            this.cartPage.waitUntilProductInCart();
-            this.cartPage.enterCouponCode(discountCode);
-            this.cartPage.clickApplyCouponButton();
-            BigDecimal cartSubtotal = this.cartPage.captureCartSubtotal();
-            assertThat(productPrice, comparesEqualTo(cartSubtotal));
-            // assert here cart subtotal = captured price from earlier
-            // then assert that the money removed is subtotal * discountValue
-            // then assert that subtotal - discount value + shipping = total
-            BigDecimal couponDeduction = this.cartPage.captureCouponDeduction();
-            BigDecimal calculatedCouponDeduction = cartSubtotal.multiply(BigDecimal.valueOf(discountValue));
-            assertThat(couponDeduction, comparesEqualTo(calculatedCouponDeduction));
-            BigDecimal shippingCost = this.cartPage.captureShippingCost();
-            BigDecimal finalCartTotal = this.cartPage.captureFinalCartTotal();
-            BigDecimal calculatedFinalTotal = cartSubtotal.subtract(couponDeduction).add(shippingCost);
-            assertThat(finalCartTotal, comparesEqualTo(calculatedFinalTotal));
+            // user is already logged in here, owing to setUp()
+            new MyAccountPage(this.driver, this.wait)
+                    .navbar().navigateToShop()
+                    .clickAddToCartForProduct(productName)
+                    .navbar().navigateToCart()
+                    .enterCouponCode(couponCode)
+                    .clickApplyCouponButton()
+                    .captureProductSubtotal(this.capturedValuesMap)
+                    .captureCartSubtotal(this.capturedValuesMap)
+                    .captureCouponDeduction(this.capturedValuesMap)
+                    .captureShippingCost(this.capturedValuesMap)
+                    .captureFinalCartTotal(this.capturedValuesMap);
+            // now retrieve captured (actual) values
+            BigDecimal capturedProductSubtotal = CaptureHelper.interpretPricedAsBigDecimal(this.capturedValuesMap.get("productSubtotal"));
+            BigDecimal capturedCartSubtotal = CaptureHelper.interpretPricedAsBigDecimal(this.capturedValuesMap.get("cartSubtotal"));
+            BigDecimal capturedCouponDeduction = CaptureHelper.interpretPricedAsBigDecimal(this.capturedValuesMap.get("couponDeduction"));
+            BigDecimal capturedShippingCost = CaptureHelper.interpretPricedAsBigDecimal(this.capturedValuesMap.get("shippingCost"));
+            BigDecimal capturedFinalCartTotal = CaptureHelper.interpretPricedAsBigDecimal(this.capturedValuesMap.get("finalCartTotal"));
+            // now calculate (expected) values
+            BigDecimal calculatedCouponDeduction = capturedCartSubtotal.multiply(couponValue);
+            BigDecimal calculatedFinalCartTotal = capturedCartSubtotal.subtract(calculatedCouponDeduction).add(capturedShippingCost);
+            // now perform assertions based on these captured and calculated values
+            assertThat(capturedProductSubtotal, comparesEqualTo(capturedCartSubtotal));
+            assertThat(capturedCouponDeduction, comparesEqualTo(calculatedCouponDeduction));
+            assertThat(capturedFinalCartTotal, comparesEqualTo(calculatedFinalCartTotal));
         } catch (Exception e) {
-            this.takeAndSaveScreenshot("testCouponsApplied");
+            CaptureHelper.takeAndSaveScreenshot((TakesScreenshot) driver, "testCouponsApplied");
             throw e;
         }
     }
 
     @ParameterizedTest
-    @ArgumentsSource(LoggedInTestsArgProvider.class)
-    public void testPlacedOrderIsTracked(String username, String password, String streetAddress, String townCity, String postcode, String phoneNumber, String productCode) {
+    @MethodSource(TEST_DATA_SOURCE + "#provideForTestPlacedOrderIsTracked")
+    public void testPlacedOrderIsTracked(User user, String productName) {
         try {
-            this.myAccountPage.navigateToThisPage();
-            this.myAccountPage.loginUser(username, password);
-            this.myAccountPage.clickShopInNavbar();
-            // now moving onto shop page
-            this.shopPage.waitUntilOnThisPage();
-            // product price captured for checking once basket reached
-            BigDecimal productPrice = this.shopPage.captureProductPrice(productCode);
-            String productName = this.shopPage.captureProductName(productCode);
-            this.shopPage.clickAddToCartForProduct(productCode);
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException i) {
-                // do nothing
-            }
-            this.shopPage.clickCartInNavbar();
-            // now moving onto cart page
-            this.cartPage.waitUntilOnThisPage();
-            this.cartPage.waitUntilProductInCart();
-            BigDecimal cartSubtotal = this.cartPage.captureCartSubtotal();
-            assertThat(productPrice, comparesEqualTo(cartSubtotal));
-            // still only need one -- can just update the billing address form
-            // and gets shipped there
-            this.cartPage.clickCheckoutButton();
-            this.checkoutPage.waitUntilOnThisPage();
-            this.checkoutPage.enterAddressDetails(streetAddress, townCity, postcode, phoneNumber);
-            this.checkoutPage.clickCheckPaymentsOption();
-            this.checkoutPage.placeOrder();
-            this.orderReceivedPage.waitUntilOnSubOfThisPage();
-            String capturedOrderNumber = this.orderReceivedPage.captureOrderNumber();
-            String capturedDate = this.orderReceivedPage.captureOrderDate();
-            String capturedEmail = this.orderReceivedPage.captureOrderEmail();
-            BigDecimal capturedTotal = this.orderReceivedPage.captureOrderTotal();
-            String capturedPaymentMethod = this.orderReceivedPage.captureOrderPaymentMethod();
-            this.orderReceivedPage.clickMyAccountInNavbar();
-            this.myAccountPage.waitUntilOnThisPage();
-            this.myAccountPage.clickOrdersButton();
-            this.ordersPage.clickToViewOrder(capturedOrderNumber);
-            this.viewOrderPage.waitUntilOnSubOfThisPage();
-            String capturedOrderProductName = this.viewOrderPage.captureSingleItemOrdered();
-            BigDecimal capturedOrderTotal = this.viewOrderPage.captureOrderTotal();
-            assertThat(capturedOrderTotal, comparesEqualTo(capturedTotal));
+            // user is already logged in here, owing to setUp()
+            OrderReceivedPage orderReceivedPage = new MyAccountPage(this.driver, this.wait)
+                    .navbar().navigateToShop()
+                    .clickAddToCartForProduct(productName)
+                    .navbar().navigateToCart()
+                    .clickCheckoutButton()
+                    .enterName(user.firstName(), user.lastName())
+                    .enterAddressDetails(user.streetAddress(), user.townCity(), user.postcode(), user.phoneNumber())
+                    .clickCheckPaymentsOption()
+                    .placeOrder()
+                    .captureOrderNumber(this.capturedValuesMap)
+                    .captureOrderTotal(this.capturedValuesMap);
+
+            // order is now placed, save all the info captured so far as
+            // needed for next part of test
+            String capturedOrderNumber = this.capturedValuesMap.get("orderNumber");
+            BigDecimal capturedOrderTotal = CaptureHelper.interpretPricedAsBigDecimal(this.capturedValuesMap.get("orderTotal"));
+
+            // resume here
+            orderReceivedPage
+                    .navbar().navigateToMyAccount()
+                    .clickOrdersButton()
+                    .clickToViewOrder(capturedOrderNumber)
+                    .captureOrderTotal(this.capturedValuesMap);
+
+            BigDecimal capturedOrderTotalFromViewOrder = CaptureHelper.interpretPricedAsBigDecimal(this.capturedValuesMap.get("orderTotalFromViewOrder"));
+
+            // now begin assertions
+            assertThat(capturedOrderTotal, comparesEqualTo(capturedOrderTotalFromViewOrder));
         } catch (Exception e) {
-            this.takeAndSaveScreenshot("testPlacedOrderIsTracked");
+            CaptureHelper.takeAndSaveScreenshot((TakesScreenshot) driver, "testPlacedOrderIsTracked");
             throw e;
         }
-    }
-
-    private void takeAndSaveScreenshot(String filename) {
-        TakesScreenshot ts = (TakesScreenshot) driver;
-        File screenshot = ts.getScreenshotAs(OutputType.FILE);
-        Path destination = Paths.get("./target/screenshots/" + filename + "-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss")) + ".png");
-        try {
-            Files.createDirectories(Paths.get("./target/screenshots"));
-            Files.move(screenshot.toPath(), destination, REPLACE_EXISTING);  // Move the screenshot file to the destination
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println("Screenshot saved at: " + destination);
     }
 }
