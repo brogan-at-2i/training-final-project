@@ -2,10 +2,9 @@ package com.two_itesting.brogan_personal.tests.base;
 
 import com.two_itesting.brogan_personal.models.site.User;
 import com.two_itesting.brogan_personal.steps.ShoppingSteps;
-import com.two_itesting.brogan_personal.test_data.LocalTestDataFetcher;
-import com.two_itesting.brogan_personal.test_data.TestDataSource;
-import com.two_itesting.brogan_personal.utils.CaptureHelper;
 import com.two_itesting.brogan_personal.test_data.DriverType;
+import com.two_itesting.brogan_personal.test_data.LocalTestDataFetcher;
+import com.two_itesting.brogan_personal.utils.CaptureHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +18,6 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.io.IOException;
 import java.time.Duration;
 
 @EnumSource(DriverType.class)
@@ -28,19 +26,15 @@ import java.time.Duration;
 public abstract class TestBase {
 
     protected static final String TEST_DATA_SOURCE = "com.two_itesting.brogan_personal.test_data.TestDataSource";
-
+    private static final int DEFAULT_TIMEOUT = 7;
     @Parameter(0)
     protected DriverType driverType; // parameterised
-
     protected WebDriver driver;
     protected WebDriverWait wait;
-
     protected ShoppingSteps shoppingSteps;
 
-    private static final int DEFAULT_TIMEOUT = 7;
-
     @BeforeEach
-    public void setUp() throws IOException {
+    public void setUp() {
         this.driver = this.createDriverInstance();
         this.driver.manage().window().maximize(); // consistent size for each test
         this.wait = new WebDriverWait(this.driver, Duration.ofSeconds(DEFAULT_TIMEOUT));

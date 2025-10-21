@@ -11,7 +11,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public abstract class Page<T extends Page<T>> {
 
     private static final String URL = "https://www.edgewordstraining.co.uk/demo-site/";
-    private static final int INTERCEPT_RETRIES = 2;
 
     private static final By overlayLocator = By.cssSelector("div[class=\"blockUI blockOverlay\"]");
 
@@ -26,32 +25,28 @@ public abstract class Page<T extends Page<T>> {
         if (navigateTo) {
             this.driver.get(url);
         }
-//        if (subpage) { // if need to check on subpage
-//            this.waitUntilOnSubOfThisPage();
-//        } else { // else just a normal page
-//            this.waitUntilOnThisPage();
-//        }
     }
 
     public Page(WebDriver driver, WebDriverWait wait, String url) {
-        this(driver, wait, url, false,false);
+        this(driver, wait, url, false, false);
     }
 
     protected T enterTextInField(String text, By locator) {
         this.getElementWhenVisible(locator).sendKeys(text);
-        return (T) this;
+        return self();
     }
 
     protected T clearField(By locator) {
         this.getElementWhenVisible(locator).sendKeys(Keys.CONTROL, "a", Keys.BACK_SPACE);
-        return (T) this;
+        return self();
     }
 
     protected T clickWhenClickable(By locator) throws TimeoutException, NoSuchElementException, ElementClickInterceptedException {
         this.wait.until(ExpectedConditions.presenceOfElementLocated(locator));
-        this.wait.until(ExpectedConditions.invisibilityOfElementLocated(overlayLocator));this.wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+        this.wait.until(ExpectedConditions.invisibilityOfElementLocated(overlayLocator));
+        this.wait.until(ExpectedConditions.presenceOfElementLocated(locator));
         this.wait.until(ExpectedConditions.elementToBeClickable(locator)).click();
-        return (T) this;
+        return self();
     }
 
     protected T clickWhenClickableToRemove(By locator) throws TimeoutException, NoSuchElementException, ElementClickInterceptedException {
@@ -60,7 +55,7 @@ public abstract class Page<T extends Page<T>> {
         WebElement foundElement = this.wait.until(ExpectedConditions.elementToBeClickable(locator));
         foundElement.click();
         this.wait.until(ExpectedConditions.invisibilityOf(foundElement));
-        return (T) this;
+        return self();
     }
 
 
@@ -69,17 +64,17 @@ public abstract class Page<T extends Page<T>> {
         if (!this.url.equalsIgnoreCase(this.driver.getCurrentUrl())) {
             this.driver.get(this.url);
         }
-        return (T) this;
+        return self();
     }
 
     public T waitUntilOnThisPage() {
         this.wait.until(ExpectedConditions.urlToBe(this.url));
-        return (T) this;
+        return self();
     }
 
     public T waitUntilOnSubOfThisPage() {
         this.wait.until(ExpectedConditions.urlContains(this.url));
-        return (T) this;
+        return self();
     }
 
     protected WebElement getElementWhenVisible(By locator) {
@@ -89,6 +84,12 @@ public abstract class Page<T extends Page<T>> {
 
     protected String captureElementText(By locator) {
         return this.getElementWhenVisible(locator).getText();
+    }
+
+    @SuppressWarnings("unchecked")
+    public T self() {
+        //noinspection unchecked
+        return (T) this;
     }
 
 }

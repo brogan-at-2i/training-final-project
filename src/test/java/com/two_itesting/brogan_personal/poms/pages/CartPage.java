@@ -1,7 +1,7 @@
 package com.two_itesting.brogan_personal.poms.pages;
 
-import com.two_itesting.brogan_personal.poms.base.Page;
 import com.two_itesting.brogan_personal.poms.base.HasNavbar;
+import com.two_itesting.brogan_personal.poms.base.Page;
 import com.two_itesting.brogan_personal.poms.components.NavbarComponent;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -9,7 +9,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class CartPage extends Page<CartPage> implements HasNavbar {

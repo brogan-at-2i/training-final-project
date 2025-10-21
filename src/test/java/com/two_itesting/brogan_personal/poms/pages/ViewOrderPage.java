@@ -7,7 +7,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.HashMap;
 
-public class ViewOrderPage extends Page {
+public class ViewOrderPage extends Page<ViewOrderPage> {
 
     private static final By productOrderedLocator = By.cssSelector("section.woocommerce-order-details > table tr:nth-of-type(1) > td:nth-of-type(1) > a");
     private static final By orderTotalLocator = By.cssSelector("section.woocommerce-order-details > table > tfoot > tr:nth-child(4) > td > span");
@@ -20,7 +20,7 @@ public class ViewOrderPage extends Page {
 
     public ViewOrderPage captureSingleProductOrdered(HashMap<String, String> capturedValuesMap) {
         // does work with >1 item ordered, will just return the first in this case
-        String productOrdered =  this.captureElementText(productOrderedLocator);
+        String productOrdered = this.captureElementText(productOrderedLocator);
         capturedValuesMap.put("productOrdered", productOrdered);
         return this;
     }

@@ -1,7 +1,7 @@
 package com.two_itesting.brogan_personal.poms.pages;
 
-import com.two_itesting.brogan_personal.poms.base.Page;
 import com.two_itesting.brogan_personal.poms.base.HasNavbar;
+import com.two_itesting.brogan_personal.poms.base.Page;
 import com.two_itesting.brogan_personal.poms.components.DisclaimerComponent;
 import com.two_itesting.brogan_personal.poms.components.NavbarComponent;
 import org.openqa.selenium.By;
@@ -16,11 +16,9 @@ public class MyAccountPage extends Page<MyAccountPage> implements HasNavbar {
     private static final By logoutButtonLocator = By.linkText("Logout");
     private static final By accountDetailsButtonLocator = By.linkText("Account details");
     private static final By ordersButtonLocator = By.linkText("Orders");
-
+    private static final String URL = "https://www.edgewordstraining.co.uk/demo-site/my-account/";
     private final NavbarComponent navbar;
     private final DisclaimerComponent disclaimer;
-
-    private static final String URL = "https://www.edgewordstraining.co.uk/demo-site/my-account/";
 
     public MyAccountPage(WebDriver driver, WebDriverWait wait, boolean navigateTo) {
         super(driver, wait, URL, navigateTo, false);

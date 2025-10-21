@@ -8,8 +8,6 @@ import com.two_itesting.brogan_personal.utils.CaptureHelper;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.math.BigDecimal;
-
 public class CartSteps extends BaseSteps {
 
     public CartSteps(WebDriver driver, WebDriverWait wait) {

@@ -1,7 +1,7 @@
 package com.two_itesting.brogan_personal.steps;
 
-import com.two_itesting.brogan_personal.models.site.User;
 import com.two_itesting.brogan_personal.models.capture.PlacedOrderDetails;
+import com.two_itesting.brogan_personal.models.site.User;
 import com.two_itesting.brogan_personal.poms.pages.CheckoutPage;
 import com.two_itesting.brogan_personal.poms.pages.OrderReceivedPage;
 import com.two_itesting.brogan_personal.steps.base.BaseSteps;

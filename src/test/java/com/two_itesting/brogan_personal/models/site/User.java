@@ -1,17 +1,14 @@
 package com.two_itesting.brogan_personal.models.site;
 
-import io.qameta.allure.internal.shadowed.jackson.databind.annotation.JsonSerialize;
-
-
 public record User(
-    String username,
-    String password,
-    String firstName,
-    String lastName,
-    String streetAddress,
-    String townCity,
-    String postcode,
-    String phoneNumber
+        String username,
+        String password,
+        String firstName,
+        String lastName,
+        String streetAddress,
+        String townCity,
+        String postcode,
+        String phoneNumber
 ) {
     private User(Builder builder) {
         this(

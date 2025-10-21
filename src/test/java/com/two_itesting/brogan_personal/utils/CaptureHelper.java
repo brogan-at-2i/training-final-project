@@ -27,8 +27,7 @@ public final class CaptureHelper {
     }
 
     public static void takeAndSaveScreenshot(TakesScreenshot driver, String filename) {
-        TakesScreenshot ts = (TakesScreenshot) driver;
-        File screenshot = ts.getScreenshotAs(OutputType.FILE);
+        File screenshot = driver.getScreenshotAs(OutputType.FILE);
         Path destination = Paths.get("./target/screenshots/" + filename + "-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss")) + ".png");
         try {
             Files.createDirectories(Paths.get("./target/screenshots"));
@@ -39,6 +38,7 @@ public final class CaptureHelper {
         System.out.println("Screenshot saved at: " + destination);
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     @Attachment(value = "Debug Logging", type = "text/plain")
     public static String logToAllure(String message) {
         System.out.println(message); // print to console too

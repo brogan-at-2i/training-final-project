@@ -1,10 +1,10 @@
 package com.two_itesting.brogan_personal.steps;
 
+import com.two_itesting.brogan_personal.models.capture.FullCartDetails;
+import com.two_itesting.brogan_personal.models.capture.PlacedOrderDetails;
 import com.two_itesting.brogan_personal.models.site.Coupon;
 import com.two_itesting.brogan_personal.models.site.Product;
 import com.two_itesting.brogan_personal.models.site.User;
-import com.two_itesting.brogan_personal.models.capture.FullCartDetails;
-import com.two_itesting.brogan_personal.models.capture.PlacedOrderDetails;
 import com.two_itesting.brogan_personal.poms.pages.CartPage;
 import com.two_itesting.brogan_personal.poms.pages.MyAccountPage;
 import com.two_itesting.brogan_personal.steps.base.BaseSteps;
@@ -13,9 +13,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class ShoppingSteps extends BaseSteps {
 
-    protected AccountSteps accountSteps;
-    protected CartSteps cartSteps;
-    protected CheckoutSteps checkoutSteps;
+    protected final AccountSteps accountSteps;
+    protected final CartSteps cartSteps;
+    protected final CheckoutSteps checkoutSteps;
 
     public ShoppingSteps(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);

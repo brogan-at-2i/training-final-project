@@ -1,7 +1,7 @@
 package com.two_itesting.brogan_personal.tests;
 
-import com.two_itesting.brogan_personal.models.site.Coupon;
 import com.two_itesting.brogan_personal.models.capture.FullCartDetails;
+import com.two_itesting.brogan_personal.models.site.Coupon;
 import com.two_itesting.brogan_personal.models.site.Product;
 import com.two_itesting.brogan_personal.models.site.User;
 import com.two_itesting.brogan_personal.tests.base.TestBase;

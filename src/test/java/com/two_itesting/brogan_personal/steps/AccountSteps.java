@@ -1,7 +1,6 @@
 package com.two_itesting.brogan_personal.steps;
 
 import com.two_itesting.brogan_personal.models.capture.PlacedOrderDetails;
-import com.two_itesting.brogan_personal.poms.pages.HomePage;
 import com.two_itesting.brogan_personal.poms.pages.MyAccountPage;
 import com.two_itesting.brogan_personal.poms.pages.OrdersPage;
 import com.two_itesting.brogan_personal.steps.base.BaseSteps;
