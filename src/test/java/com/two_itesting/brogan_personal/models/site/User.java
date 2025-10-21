@@ -1,4 +1,7 @@
-package com.two_itesting.brogan_personal.models;
+package com.two_itesting.brogan_personal.models.site;
+
+import io.qameta.allure.internal.shadowed.jackson.databind.annotation.JsonSerialize;
+
 
 public record User(
     String username,

@@ -1,7 +1,9 @@
 package com.two_itesting.brogan_personal.steps;
 
-import com.two_itesting.brogan_personal.models.Coupon;
-import com.two_itesting.brogan_personal.models.User;
+import com.two_itesting.brogan_personal.models.site.Coupon;
+import com.two_itesting.brogan_personal.models.site.Product;
+import com.two_itesting.brogan_personal.models.site.User;
+import com.two_itesting.brogan_personal.models.capture.FullCartDetails;
 import com.two_itesting.brogan_personal.models.capture.PlacedOrderDetails;
 import com.two_itesting.brogan_personal.poms.pages.CartPage;
 import com.two_itesting.brogan_personal.poms.pages.MyAccountPage;
@@ -27,13 +29,13 @@ public class ShoppingSteps extends BaseSteps {
         this.accountSteps.loginUser(user.username(), user.password());
     }
 
-    public void placeOrderForProductWithCoupon(String productName, User user, Coupon coupon) {
-        this.addProductToCartWithCoupon(productName, coupon);
+    public void placeOrderForProductWithCoupon(Product product, User user, Coupon coupon) {
+        this.addProductToCartWithCoupon(product, coupon);
         this.checkoutSteps.checkout(user);
     }
 
-    public void placeOrderForProduct(String productName, User user) {
-        this.placeOrderForProductWithCoupon(productName, user, new Coupon("", null));
+    public void placeOrderForProduct(Product product, User user) {
+        this.placeOrderForProductWithCoupon(product, user, new Coupon("", null));
     }
 
     public PlacedOrderDetails capturePlacedOrderDetails() {
@@ -63,8 +65,12 @@ public class ShoppingSteps extends BaseSteps {
         this.accountSteps.dismissDisclaimer();
     }
 
-    public void addProductToCartWithCoupon(String productName, Coupon coupon) {
-        this.cartSteps.addProductToCart(productName);
-        this.cartSteps.applyCouponCodeToCart(coupon.couponCode());
+    public void addProductToCartWithCoupon(Product product, Coupon coupon) {
+        this.cartSteps.addProductToCart(product.name());
+        this.cartSteps.applyCouponCodeToCart(coupon.code());
+    }
+
+    public FullCartDetails captureFulLCartDetails() {
+        return this.cartSteps.captureFullCartDetails();
     }
 }

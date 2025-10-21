@@ -1,10 +1,14 @@
 package com.two_itesting.brogan_personal.steps;
 
+import com.two_itesting.brogan_personal.models.capture.FullCartDetails;
 import com.two_itesting.brogan_personal.poms.pages.CartPage;
 import com.two_itesting.brogan_personal.poms.pages.ShopPage;
 import com.two_itesting.brogan_personal.steps.base.BaseSteps;
+import com.two_itesting.brogan_personal.utils.CaptureHelper;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.math.BigDecimal;
 
 public class CartSteps extends BaseSteps {
 
@@ -37,4 +41,19 @@ public class CartSteps extends BaseSteps {
                 .clearCart();
     }
 
+    public FullCartDetails captureFullCartDetails() {
+        CartPage cartPage = new CartPage(this.driver, this.wait);
+        String capturedProductSubtotal = cartPage.captureProductSubtotal();
+        String capturedCartSubtotal = cartPage.captureCartSubtotal();
+        String capturedCouponDeduction = cartPage.captureCouponDeduction();
+        String capturedShippingCost = cartPage.captureShippingCost();
+        String capturedFinalCartTotal = cartPage.captureFinalCartTotal();
+        return new FullCartDetails(
+                CaptureHelper.interpretPricedAsBigDecimal(capturedProductSubtotal),
+                CaptureHelper.interpretPricedAsBigDecimal(capturedCartSubtotal),
+                CaptureHelper.interpretPricedAsBigDecimal(capturedCouponDeduction),
+                CaptureHelper.interpretPricedAsBigDecimal(capturedShippingCost),
+                CaptureHelper.interpretPricedAsBigDecimal(capturedFinalCartTotal)
+        );
+    }
 }

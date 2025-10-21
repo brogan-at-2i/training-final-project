@@ -68,29 +68,21 @@ public class CartPage extends Page<CartPage> implements HasNavbar {
         return this;
     }
 
-    public CartPage captureCartSubtotal(HashMap<String, String> capturedValuesMap) {
-        String cartSubtotal = this.captureElementText(cartSubtotalLocator);
-        capturedValuesMap.put("cartSubtotal", cartSubtotal);
-        return this;
+    public String captureCartSubtotal() {
+        return this.captureElementText(cartSubtotalLocator);
     }
 
-    public CartPage captureCouponDeduction(HashMap<String, String> capturedValuesMap) {
+    public String captureCouponDeduction() {
         // often experience issues with this, so utilising waits
-        String couponDeduction = this.captureElementText(couponDeductionLabelLocator);
-        capturedValuesMap.put("couponDeduction", couponDeduction);
-        return this;
+        return this.captureElementText(couponDeductionLabelLocator);
     }
 
-    public CartPage captureShippingCost(HashMap<String, String> capturedValuesMap) {
-        String shippingCost = this.captureElementText(shippingLabelLocator);
-        capturedValuesMap.put("shippingCost", shippingCost);
-        return this;
+    public String captureShippingCost() {
+        return this.captureElementText(shippingLabelLocator);
     }
 
-    public CartPage captureFinalCartTotal(HashMap<String, String> capturedValuesMap) {
-        String finalCartTotal = this.captureElementText(finalCartTotalLocator);
-        capturedValuesMap.put("finalCartTotal", finalCartTotal);
-        return this;
+    public String captureFinalCartTotal() {
+        return this.captureElementText(finalCartTotalLocator);
     }
 
     public CheckoutPage clickCheckoutButton() {
@@ -103,9 +95,7 @@ public class CartPage extends Page<CartPage> implements HasNavbar {
         return this.navbar;
     }
 
-    public CartPage captureProductSubtotal(HashMap<String, String> capturedValuesMap) {
-        String productSubtotal = this.captureElementText(productSubtotalLocator);
-        capturedValuesMap.put("productSubtotal", productSubtotal);
-        return this;
+    public String captureProductSubtotal() {
+        return this.captureElementText(productSubtotalLocator);
     }
 }
